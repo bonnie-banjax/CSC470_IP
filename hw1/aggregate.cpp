@@ -1,3 +1,10 @@
+
+// ORD
+
+#define CLIP(val, low, high) ((val) < (low) ? (low) : (val) > (high) ? (high) : (val))
+
+// END
+
 #include "IP.h"
 using namespace IP;
 
@@ -68,6 +75,7 @@ for(int i = 0; i < MXGRAY; i++) {
     lut[i] = CLIP(val, 0, MaxGray);
 }
 // END
+
 }
 #include "IP.h"
 using namespace IP;
