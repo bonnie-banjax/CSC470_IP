@@ -11,6 +11,7 @@ Make*
 
 hold
 build
+build-*/
 images
 kernels
 warps
@@ -33,3 +34,6 @@ CS470.pro
 CS470_HW
 
 hackfix.sh
+.gitignore
+*_Guide/
+README.md
