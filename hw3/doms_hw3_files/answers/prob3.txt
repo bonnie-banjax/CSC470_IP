@@ -1,0 +1,27 @@
+Problem 3: dft1D in dir out
+===========================
+Source: hw3/cmdline/dft1D.cpp   Build: cd hw3/cmdline && make
+
+dft1D reads a list of complex numbers (first line "2 N", then N lines "real imag"),
+computes the straightforward O(N^2) DFT of Eqs. (1) and (2), and writes the result
+in the same format. dir = 0 computes the forward DFT (with the 1/N factor);
+dir = 1 computes the inverse DFT. N can be any length (here N = 6).
+
+Confirming Problems 1 and 2 on list L = 10, 40, 20, 90, 5, 30:
+
+  ./dft1D data/L.txt 0 data/L_dft.txt      (forward DFT of L)
+  2 6
+  32.5000000000  0.0000000000        F(0)
+  -9.5833333333 -3.6084391824        F(1)
+   8.7500000000  0.7216878365        F(2)
+ -20.8333333333  0.0000000000        F(3)
+   8.7500000000 -0.7216878365        F(4)
+  -9.5833333333  3.6084391824        F(5)
+  -> identical to the hand calculations in prob1.txt.
+
+  ./dft1D data/L_dft.txt 1 data/L_back.txt (inverse DFT of the coefficients)
+  2 6
+  10.0000000001 0      40 (39.9999999999) 0      20.0000000000 0
+  90 (89.9999999999) 0      5.0000000000 0      30.0000000001 0
+  -> gives back L = 10, 40, 20, 90, 5, 30 (differences ~1e-10 are round-off),
+     confirming the reconstruction in prob2.txt.

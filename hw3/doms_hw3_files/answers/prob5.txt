@@ -1,0 +1,55 @@
+Problem 5: Examples and properties of the DFT
+=============================================
+All signals have N = 256 samples (mandrill row: N = 512). Each was saved to
+hw3/cmdline/data/prob5?.txt and transformed with fft1D (forward, 1/N scaling);
+results are in data/prob5?_fft.txt. Plots: prob5.xlsx (one sheet per part,
+with the input, magnitude spectrum and phase spectrum; frequencies centered,
+n = -N/2 .. N/2-1).
+
+a) Impulse a(x) (1 at x = 128)
+   The magnitude spectrum is completely flat: |F(n)| = 1/256 = 0.0039 for every n.
+   An impulse contains ALL frequencies in equal amounts. (The phase alternates
+   between 0 and pi, i.e., e^{-i pi n}, because the impulse sits at x = 128 = N/2
+   rather than at x = 0.)
+
+b) Box b(x), width 16
+   |F(0)| = 16/256 = 0.0625 (the average), and |F(n)| falls off like a sinc with
+   zeros at n = 16, 32, 48, ... = multiples of N/16 = 256/16. The magnitudes match
+   the discrete sinc |sin(pi n 16/256) / (256 sin(pi n/256))| to within 1e-10.
+   So the magnitude spectrum of a box is a sinc function.
+
+c) c(x) = b(x/2), box of width 32
+   Stretching the box by 2 in space compresses its spectrum by 2: the sinc's zeros
+   move to n = 8, 16, 24, ... (twice as close together), and the main lobe is half
+   as wide. Its height doubles: |F(0)| = 32/256 = 0.125 (twice the area).
+   Scaling: wider in space <-> narrower in frequency, and vice versa.
+
+d) Constant d(x) = 1
+   Only F(0) is nonzero: F(0) = 1 and F(n) = 0 for n != 0. The transform of a
+   constant is an impulse at frequency 0 (the DC term = the average value).
+
+e) e(x) = b(x) + cos(8 pi x / 256)
+   cos(8 pi x/256) = cos(2 pi 4 x/256) is 4 cycles per scanline, so it adds two
+   spikes at n = +4 and n = -4 (n = 252), each 1/2 in size. Linearity: the
+   transform of e is the transform of b plus the transform of the cosine.
+   |F(4)| went from 0.056 (box alone) to 0.556; every other frequency is unchanged
+   (difference < 1e-10). The cosine shows up as one pair of symmetric spikes.
+
+f) f(x) = 10 b(x)
+   The magnitude spectrum is exactly 10 times that of b(x) (|F(0)| = 0.625); the
+   phase spectrum is unchanged. Scaling the amplitude by a constant scales the
+   transform by the same constant (linearity).
+
+g) g(x) = b(x - 16)
+   The magnitude spectrum is identical to b's (difference < 1e-10): shifting does
+   not change which frequencies are present or how strong they are. Only the phase
+   changes: phase_g(n) = phase_b(n) - 2 pi 16 n / 256, a linear phase ramp
+   (-0.3927 rad per unit of n, verified for n = 1..5). Shift theorem:
+   f(x - x0) <-> F(n) e^{-i 2 pi n x0 / N}.
+
+h) Mandrill row 128 and its 32-pixel circular shift
+   Same result as (g): the magnitude spectra of the original and shifted scanlines
+   are identical (difference < 1e-10). The phase spectrum changes by the linear
+   term -2 pi 32 n / 512 (-0.3927 rad per unit of n). All the "where things are"
+   information is in the phase; the magnitude only says "how much of each
+   frequency".

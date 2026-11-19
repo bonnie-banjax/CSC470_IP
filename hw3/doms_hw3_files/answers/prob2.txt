@@ -1,0 +1,42 @@
+Problem 2: Fourier Synthesis
+============================
+
+a) Magnitude and phase spectra
+------------------------------
+  |F(n)| = sqrt(Re^2 + Im^2),   phase(n) = atan2(Im, Re)  (radians)
+
+   n      F(n)                    |F(n)|      phase (rad)    phase (deg)
+   0   32.5000 + 0.0000i         32.5000       0.0000          0.00
+   1   -9.5833 - 3.6084i         10.2402      -2.7815       -159.37
+   2   8.7500 + 0.7217i           8.7797       0.0823          4.72
+   3   -20.8333 + 0.0000i        20.8333       3.1416        180.00
+   4   8.7500 - 0.7217i           8.7797      -0.0823         -4.72
+   5   -9.5833 + 3.6084i         10.2402       2.7815        159.37
+  Magnitude is symmetric (|F(n)| = |F(6-n)|); phase is antisymmetric (phase(n) = -phase(6-n)).
+  F(3) = -20.8333 is a negative real number, so its magnitude is 20.8333 and its phase is pi.
+
+b) Reconstructing L from scaled and shifted cosines
+---------------------------------------------------
+Eq. (2): f(k) = sum_{n=0}^{5} F(n) e^{+i2pi nk/6}. Writing F(n) = |F(n)| e^{i phase(n)}
+and pairing each n with its conjugate 6-n (n=1 with 5, n=2 with 4) gives a real sum of cosines:
+    F(n)e^{i2pi nk/6} + F(6-n)e^{i2pi(6-n)k/6} = 2|F(n)| cos(2pi nk/6 + phase(n))
+So:
+  f(k) = |F0| + 2|F1| cos(2pi k/6 + p1) + 2|F2| cos(2pi 2k/6 + p2) + |F3| cos(2pi 3k/6 + p3)
+       = 32.5000 + 20.4803 cos(60k deg -159.37 deg) + 17.5594 cos(120k deg +4.72 deg) + 20.8333 cos(180k deg +180.00 deg)
+
+  Term 1 (DC)       : constant 32.5 (the average of L)
+  Term 2 (1 cycle)  : amplitude 2|F1| = 20.4803, shifted by -159.37 deg
+  Term 3 (2 cycles) : amplitude 2|F2| = 17.5594, shifted by 4.72 deg
+  Term 4 (3 cycles) : amplitude  |F3| = 20.8333, shifted by 180.00 deg (= -cos(180k), alternates sign)
+
+   k |   DC    |  term 2   |  term 3   |  term 4   |  sum      | L(k)
+  ---+---------+-----------+-----------+-----------+-----------+-----
+   0 | 32.5000 |  -19.1667 |   17.5000 |  -20.8333 |   10.0000 | 10
+   1 | 32.5000 |   -3.3333 |  -10.0000 |   20.8333 |   40.0000 | 40
+   2 | 32.5000 |   15.8333 |   -7.5000 |  -20.8333 |   20.0000 | 20
+   3 | 32.5000 |   19.1667 |   17.5000 |   20.8333 |   90.0000 | 90
+   4 | 32.5000 |    3.3333 |  -10.0000 |  -20.8333 |    5.0000 | 5
+   5 | 32.5000 |  -15.8333 |   -7.5000 |   20.8333 |   30.0000 | 30
+
+Each row of cosine terms adds up exactly to the original list L = 10, 40, 20, 90, 5, 30.
+(dft1D confirms this: the inverse DFT of the coefficients, hw3/cmdline/data/L_back.txt, gives back L.)

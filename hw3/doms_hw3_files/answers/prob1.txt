@@ -1,0 +1,88 @@
+Problem 1: Fourier Analysis
+===========================
+Definition (Eq. 1):  F(n) = (1/N) * sum_{k=0}^{N-1} f(k) e^{-i2pi nk/N}
+                         = (1/N) * sum_k f(k) [cos(2pi nk/N) - i sin(2pi nk/N)]
+List L: f(0..5) = 10, 40, 20, 90, 5, 30     N = 6, so the angle step is 2pi/6 = 60 degrees.
+
+Values of cos and sin at multiples of 60 degrees (index m = nk mod 6):
+   m :    0      1        2        3      4         5
+  cos:    1     1/2     -1/2      -1    -1/2      1/2
+  sin:    0   sqrt3/2  sqrt3/2     0  -sqrt3/2  -sqrt3/2      (sqrt3/2 = 0.8660)
+
+a) The six Fourier coefficients
+-------------------------------
+
+F(0): angles 2pi*0*k/6 -> m = 0k mod 6 = 0, 0, 0, 0, 0, 0
+  sum f(k)cos = 10(1) + 40(1) + 20(1) + 90(1) + 5(1) + 30(1)
+             = 195.0000
+  sum f(k)sin = 10(0) + 40(0) + 20(0) + 90(0) + 5(0) + 30(0)
+             = 0.0000
+  F(0) = (1/6)[195.0000 - i(0.0000)] = 32.5000 + 0.0000i
+
+F(1): angles 2pi*1*k/6 -> m = 1k mod 6 = 0, 1, 2, 3, 4, 5
+  sum f(k)cos = 10(1) + 40(1/2) + 20(-1/2) + 90(-1) + 5(-1/2) + 30(1/2)
+             = -57.5000
+  sum f(k)sin = 10(0) + 40(sqrt3/2) + 20(sqrt3/2) + 90(0) + 5(-sqrt3/2) + 30(-sqrt3/2)
+             = 21.6506
+  F(1) = (1/6)[-57.5000 - i(21.6506)] = -9.5833 - 3.6084i
+
+F(2): angles 2pi*2*k/6 -> m = 2k mod 6 = 0, 2, 4, 0, 2, 4
+  sum f(k)cos = 10(1) + 40(-1/2) + 20(-1/2) + 90(1) + 5(-1/2) + 30(-1/2)
+             = 52.5000
+  sum f(k)sin = 10(0) + 40(sqrt3/2) + 20(-sqrt3/2) + 90(0) + 5(sqrt3/2) + 30(-sqrt3/2)
+             = -4.3301
+  F(2) = (1/6)[52.5000 - i(-4.3301)] = 8.7500 + 0.7217i
+
+F(3): angles 2pi*3*k/6 -> m = 3k mod 6 = 0, 3, 0, 3, 0, 3
+  sum f(k)cos = 10(1) + 40(-1) + 20(1) + 90(-1) + 5(1) + 30(-1)
+             = -125.0000
+  sum f(k)sin = 10(0) + 40(0) + 20(0) + 90(0) + 5(0) + 30(0)
+             = 0.0000
+  F(3) = (1/6)[-125.0000 - i(0.0000)] = -20.8333 + 0.0000i
+
+F(4): angles 2pi*4*k/6 -> m = 4k mod 6 = 0, 4, 2, 0, 4, 2
+  sum f(k)cos = 10(1) + 40(-1/2) + 20(-1/2) + 90(1) + 5(-1/2) + 30(-1/2)
+             = 52.5000
+  sum f(k)sin = 10(0) + 40(-sqrt3/2) + 20(sqrt3/2) + 90(0) + 5(-sqrt3/2) + 30(sqrt3/2)
+             = 4.3301
+  F(4) = (1/6)[52.5000 - i(4.3301)] = 8.7500 - 0.7217i
+
+F(5): angles 2pi*5*k/6 -> m = 5k mod 6 = 0, 5, 4, 3, 2, 1
+  sum f(k)cos = 10(1) + 40(1/2) + 20(-1/2) + 90(-1) + 5(-1/2) + 30(1/2)
+             = -57.5000
+  sum f(k)sin = 10(0) + 40(-sqrt3/2) + 20(-sqrt3/2) + 90(0) + 5(sqrt3/2) + 30(sqrt3/2)
+             = -21.6506
+  F(5) = (1/6)[-57.5000 - i(-21.6506)] = -9.5833 + 3.6084i
+
+Summary:
+  F(0) = 32.5000 + 0.0000i
+  F(1) = -9.5833 - 3.6084i
+  F(2) = 8.7500 + 0.7217i
+  F(3) = -20.8333 + 0.0000i
+  F(4) = 8.7500 - 0.7217i
+  F(5) = -9.5833 + 3.6084i
+Check: F(5) = conj(F(1)) and F(4) = conj(F(2)), as expected for a real input list.
+(These match the output of dft1D in hw3/cmdline/data/L_dft.txt.)
+
+b) Why the maximum frequency cannot exceed 3 = N/2 cycles per scanline
+-----------------------------------------------------------------------
+With N = 6 samples, a sinusoid needs at least 2 samples per cycle (one for its
+peak and one for its trough) to be represented. So at most N/2 = 3 full cycles
+fit across the 6 samples. A frequency n > N/2 is sampled too sparsely: its
+samples are identical to those of the lower frequency N - n (it "aliases").
+For example, frequency n = 4 gives e^{-i2pi 4k/6} = e^{-i2pi(4-6)k/6} = e^{+i2pi 2k/6},
+which is just frequency -2, i.e., 2 cycles per scanline traveling the other way.
+So frequencies 4 and 5 carry no new information: they are frequencies -2 and -1.
+The highest distinct frequency is the Nyquist frequency N/2 = 3.
+
+c) n = 0..5 gives the same results as n = -2..3
+-----------------------------------------------
+For any integer n and sample k:
+    e^{-i2pi (n-6) k / 6} = e^{-i2pi nk/6} * e^{+i2pi k} = e^{-i2pi nk/6} * 1
+because e^{i2pi k} = 1 for every integer k. Therefore F(n - 6) = F(n), so:
+    F(-2) computed directly from Eq. (1) = 8.7500 - 0.7217i = F(4)
+    F(-1) computed directly from Eq. (1) = -9.5833 + 3.6084i = F(5)
+    F(0), F(1), F(2), F(3) are the same in both sets.
+So {F(-2), F(-1), F(0), F(1), F(2), F(3)} is the same set of numbers as
+{F(4), F(5), F(0), F(1), F(2), F(3)}, i.e., the same as n = 0..5. The set
+n = -2..3 just relabels them so that no |n| exceeds the 3 cycles/scanline limit.

@@ -1,0 +1,19 @@
+Problem 7: HW_swapPhase -- magnitude or phase?
+==============================================
+out1 = inverse FFT of mag(I1) and phase(I2)
+out2 = inverse FFT of mag(I2) and phase(I1)
+
+Result (I1 = mandrill, I2 = peppers, both gray 512x512):
+  out1 looks like PEPPERS (the image that supplied the phase):
+       correlation with peppers 0.70, with mandrill 0.03
+  out2 looks like MANDRILL (the image that supplied the phase):
+       correlation with mandrill 0.69, with peppers 0.02
+  (see tests/test_hw3.cpp; the same is visible in the app's Swap Phase output)
+
+Each output looks like the image whose PHASE it received; the magnitude only
+changes the overall texture/contrast. So the phase spectrum is more important
+for preserving the image: it encodes where edges and features are located,
+while the magnitude encodes how much of each frequency there is. Natural images
+have similar magnitude spectra (large at low frequencies, falling off at high
+frequencies), so swapping magnitudes changes little; swapping phases swaps the
+content of the images.

@@ -1,0 +1,22 @@
+Problem 4: fft1D in dir out
+===========================
+Source: hw3/cmdline/fft1D.cpp   Build: cd hw3/cmdline && make
+
+fft1D uses the recursive Danielson-Lanczos lemma: a DFT of length N is split into
+the DFTs of the even-indexed samples Fe and the odd-indexed samples Fo (each of
+length N/2), which are combined as
+    F(n)       = Fe(n) + W^n Fo(n)
+    F(n + N/2) = Fe(n) - W^n Fo(n),     W = e^{-i2pi/N},  0 <= n < N/2
+The recursion stops at length 1. This takes O(N log N) operations instead of O(N^2).
+The forward result is scaled by 1/N to match Eq. (1). N must be a power of 2:
+    ./fft1D data/L.txt 0 out.txt   ->   "N = 6 is not a power of 2"
+
+Comparison with dft1D on the 8-point example from the lecture notes
+(10, 15, 20, 25, 5, 30, 8, 4):
+  ./fft1D data/slide8.txt 0 data/slide8_fft.txt
+  ./dft1D data/slide8.txt 0 data/slide8_dft.txt
+  diff data/slide8_fft.txt data/slide8_dft.txt     -> no differences
+  F(0) = 14.625 (= 117/8),  F(2) = -1.625 - 2i (= (-13 - 16i)/8),  F(4) = -3.875 (= -31/8),
+  matching the lecture's FFT example. The inverse (dir = 1) gives back the input.
+The FFT was also checked against the DFT on 256 random complex values
+(max difference 1.7e-12; see tests/test_hw3.cpp).
